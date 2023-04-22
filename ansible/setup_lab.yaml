@@ -1,0 +1,15 @@
+---
+
+- name: Setup lab
+  hosts: vms
+  roles:
+    - create_proxy
+    - create_services
+  vars:
+    users:
+      - name: user01
+        port: 10001
+        hash: argon2:$argon2id$v=19$m=10240,t=10,p=8$BWAl62q5SC30frro9dpuLg$1o6Vz34ZAUtgpTnN6C9T4UvyE24etVwoYktnqFxYVOo
+      - name: user02
+        port: 10002
+        hash: argon2:$argon2id$v=19$m=10240,t=10,p=8$BWAl62q5SC30frro9dpuLg$1o6Vz34ZAUtgpTnN6C9T4UvyE24etVwoYktnqFxYVOo
