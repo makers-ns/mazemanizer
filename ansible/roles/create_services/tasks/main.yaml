@@ -16,16 +16,16 @@
 - name: Create env files
   ansible.builtin.template:
     src: config.env.j2
-    dest: "/etc/gozinc/config.d/{{ item.name }}"
+    dest: "/etc/gozinc/config.d/{{ item.name }}.env"
     owner: root
     group: root
     mode: "0644"
-  loop: "{{ gozinc_config_files }}"
+  loop: "{{ users }}"
 
-- name: Create systemd service file
+- name: Create jupyter-server service
   ansible.builtin.template:
     src: jupyter-server@.service.j2
-    dest: "/etc/systemd/system/jupyter-server@.service"
+    dest: /etc/systemd/system/jupyter-server@.service
     owner: root
     group: root
     mode: "0644"
@@ -36,4 +36,4 @@
     state: started
     enabled: true
     daemon_reload: true
-  loop: "{{ gozinc_config_files }}"
+  loop: "{{ users }}"
