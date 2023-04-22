@@ -10,6 +10,7 @@ Environment=PODMAN_SYSTEMD_UNIT=%n-%i
 EnvironmentFile=/etc/gozinc/config.d/%i.env
 Restart=on-failure
 TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/%n.ctr-id
 ExecStart=/usr/bin/podman run \
 	--name=jupyter-server-%i \
 	--cidfile=%t/%n.ctr-id \
@@ -17,8 +18,8 @@ ExecStart=/usr/bin/podman run \
 	--rm \
 	--sdnotify=conmon \
 	-d \
-	-p "$JUPYTER_HOST_PORT:8888" docker.io/jupyter/base-notebook:python-3.10 start-notebook.sh \
-	--NotebookApp.password="$JUPYTER_PASSWORD"
+	-p "${JUPYTER_HOST_PORT}:8888" docker.io/jupyter/base-notebook:python-3.10 start-notebook.sh \
+	--NotebookApp.password="${JUPYTER_PASSWORD}" --NotebookApp.base_url="/%i/"
 ExecStop=/usr/bin/podman stop \
 	--ignore -t 10 \
 	--cidfile=%t/%n.ctr-id
