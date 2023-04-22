@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/rocky9"
+  config.vm.network "private_network", ip: "192.168.58.10"
+
+  config.vm.provision "Permit root login",
+                      type: "shell",
+                      path: "./permit_root_login.sh"
+
+  config.vm.provision "Copy public key",
+                      after: "Permit root login",
+                      type: "file",
+                      source: "./key.pub",
+                      destination: "/home/vagrant/key.pub"
+
+  config.vm.provision "Install authorized_keys",
+                      after: "Copy public key",
+                      type: "shell",
+                      path: "./install_auth_keys.sh"
+end
