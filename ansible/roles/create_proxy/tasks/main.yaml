@@ -5,6 +5,26 @@
     name: nginx
     state: present
 
+- name: Allow nginx to be a proxy
+  ansible.posix.seboolean:
+    name: httpd_can_network_relay
+    state: true
+    persistent: true
+
+- name: Allow nginx to connect to the internet
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
+
+- name: Allow nginx to connect to ports
+  community.general.seport:
+    ports: "{{ item.port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  loop: "{{ users }}"
+
 - name: Start nginx
   ansible.builtin.systemd:
     name: nginx
