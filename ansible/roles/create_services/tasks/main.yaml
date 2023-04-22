@@ -29,11 +29,11 @@
     owner: root
     group: root
     mode: "0644"
+  notify: Restart jupyter-server
 
-- name: Enable and start jupyter-server
+- name: Enable jupyter-server
   ansible.builtin.systemd:
     name: "jupyter-server@{{ item.name }}"
-    state: started
     enabled: true
     daemon_reload: true
   loop: "{{ users }}"

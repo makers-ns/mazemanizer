@@ -1,0 +1,7 @@
+---
+
+- name: Restart jupyter-server
+  ansible.builtin.systemd:
+    name: "jupyter-server@{{ item.name }}"
+    state: restarted
+  loop: "{{ users }}"
