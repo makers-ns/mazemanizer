@@ -30,4 +30,5 @@
     name: "jupyter-server@{{ item.name }}"
     state: started
     enabled: true
+    daemon_reload: true
   loop: "{{ gozinc_config_files }}"
