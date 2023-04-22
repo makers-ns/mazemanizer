@@ -1,0 +1,5 @@
+{% for cfg in gozinc_config_files %}
+location /{{ cfg.name }}/ {
+  proxy_pass http://127.0.0.1:{{ cfg.port }}/;
+}
+{% endfor %}
