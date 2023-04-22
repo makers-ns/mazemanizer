@@ -1,5 +1,10 @@
 ---
 
+- name: Install podman
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+
 - name: Create env files directory
   ansible.builtin.file:
     path: /etc/gozinc/config.d
