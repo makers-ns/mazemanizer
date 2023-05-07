@@ -1,7 +1,7 @@
 ---
 
 - name: Setup lab
-  hosts: vms
+  hosts: labs
   roles:
     - create_proxy
     - create_services
