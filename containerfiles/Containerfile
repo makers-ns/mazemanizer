@@ -1,0 +1,24 @@
+FROM docker.io/jupyter/minimal-notebook:python-3.10
+
+LABEL org.opencontainers.image.authors "Dušan Simić <dusan.s@maker.rs>"
+LABEL org.opencontainers.image.url "https://github.com/makers-ns/gozinc2023"
+LABEL org.opencontainers.image.title "GoZINC 2023 Jupyter Notebook"
+
+# Install opencv dependencies
+
+USER root
+RUN apt-get update
+RUN apt-get -y install ffmpeg libsm6 libxext6
+
+# Install workshop dependencies
+
+USER ${NB_UID}
+COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN fix-permissions "${CONDA_DIR}"
+RUN fix-permissions "/home/${NB_USER}"
+RUN rm -rf /tmp/requirements.txt
+
+# Copy workshop notebook
+
+COPY --chown=${NB_UID}:${NB_GID} notebook.ipynb .

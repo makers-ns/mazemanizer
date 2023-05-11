@@ -1,3 +1,2 @@
-cv2
-ipycernel
+opencv-python
 numpy
