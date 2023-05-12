@@ -1,8 +1,5 @@
 name: Build and publish container image
 
-permissions:
-  packages: write
-
 on:
   push:
     branches:
@@ -10,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: gozinc-notebook
+  IMAGE_NAME: notebook
 
 jobs:
   build-and-push:
