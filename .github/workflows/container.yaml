@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/container.yaml
       - containerfiles/**
       - requirements.txt
       - notebook.ipynb
