@@ -1,15 +1,17 @@
 import cv2 as cv
-  
+import time 
   
 # define a video capture object
 vid = cv.VideoCapture(0)
 
-ret, frame = vid.read()
-
-# Display the resulting frame
-cv.imwrite("test.jpg", frame)
+while True:
+    ret, frame = vid.read()
+    if ret == True:
+        cv.imwrite("images/walls.jpg", frame)
+        print('New image written!')
+    else:
+        print('Camera error: %d' % ret)
+    time.sleep(3)
 
 # After the loop release the cap object
 vid.release()
-# Destroy all the windows
-cv.destroyAllWindows()
