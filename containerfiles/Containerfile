@@ -10,14 +10,18 @@ USER root
 RUN apt-get update
 RUN apt-get -y install ffmpeg libsm6 libxext6
 
+# Install pipenv
+USER ${NB_UID}
+RUN pip install pipenv
+
 # Install workshop dependencies
 
-USER ${NB_UID}
-COPY --chown=${NB_UID}:${NB_GID} requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY --chown=${NB_UID}:${NB_GID} Pipfile .
+COPY --chown=${NB_UID}:${NB_GID} Pipfile.lock .
+RUN pipenv install --system
 RUN fix-permissions "${CONDA_DIR}"
 RUN fix-permissions "/home/${NB_USER}"
-RUN rm -rf /tmp/requirements.txt
+RUN rm -rf Pipfile Pipfile.lock
 
 # Copy workshop notebook
 
