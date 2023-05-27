@@ -94,11 +94,32 @@ class Image:
   def _paint_corner(self, corner, color):
     self.img[corner[1]-10:corner[1]+10, corner[0]-10:corner[0]+10] = color
   
-  def fix_perspective(self, corners):
+  def fix_perspective(self, corners, cell_size, cell_num):
     """Fix the perspective of the maze"""
+    cell_w, cell_h = cell_size
+    cell_nw, cell_nh = cell_num
+    img_w = cell_w * cell_nw
+    img_h = cell_h * cell_nh
     pts1 = np.float32(corners)
-    pts2 = np.float32([[0, 0], [300 - 1, 0], [0, 300 - 1], [300 - 1, 300 - 1]])
+    pts2 = np.float32([[0, 0], [img_w - 1, 0], [0, img_h - 1], [img_w - 1, img_h - 1]])
     matrix = cv.getPerspectiveTransform(pts1, pts2)
     print("Set new areas and origin points!")
-    return Image(cv.warpPerspective(self.img, matrix, (300, 300)))
+    return Image(cv.warpPerspective(self.img, matrix, (img_h, img_w)))
+
+  @staticmethod
+  def from_map(m):
+    COLOR_CLASSES = [
+        (255, 0, 0),
+        (0, 255, 0),
+        (0, 0, 255),
+        (0, 0, 0),
+        (255, 255, 255),
+    ]
+    m = m.m
+    w, h = m.shape
+    image = np.zeros((h * 10, w * 10, 3), dtype=np.uint8)
+    for y in range(h):
+        for x in range(w):
+            image[y:y+10, x:x+10] = COLOR_CLASSES[m[y, x]]
+    return Image(image)
 
