@@ -1,57 +1,49 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-# global pinout
-GPIO_SERVO_X = 12
-GPIO_SERVO_Y = 13
+# constants
+FREQ = 100 # Hz
+START_X = 10
+START_Y = 10
+STEP = 0.5
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(GPIO_SERVO_X, GPIO.OUT)
-GPIO.setup(GPIO_SERVO_Y, GPIO.OUT)
- # 50 Hz 
-pwm_x = GPIO.PWM(GPIO_SERVO_X, 100)
-pwm_y = GPIO.PWM(GPIO_SERVO_Y, 100)
-pwm_x.start(0)
-pwm_y.start(0)
+class Servo:
 
-def starting_position():
-    pwm_x.ChangeDutyCycle(10)
-    pwm_y.ChangeDutyCycle(10)
+    def __init__(self, GPIO_SERVO_X = 12, GPIO_SERVO_Y = 13):
 
-def using_keys():
-    global x
-    x = 10
-    global y
-    y = 10
-    while True:
-        inp = input()
-        if inp == 'a':
-            x += 2
-            pwm_x.ChangeDutyCycle(x)
-        elif inp == 'd':
-            x -= 2
-            pwm_x.ChangeDutyCycle(x)
-        elif inp == 'w':
-            y -= 2
-            pwm_y.ChangeDutyCycle(y)
-        elif inp == 's':
-            y += 2
-            pwm_y.ChangeDutyCycle(y)
-        elif inp == 'q':
-            break
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(GPIO_SERVO_X, GPIO.OUT)
+        GPIO.setup(GPIO_SERVO_Y, GPIO.OUT)
+        self.pwm_x = GPIO.PWM(GPIO_SERVO_X, FREQ)
+        self.pwm_y = GPIO.PWM(GPIO_SERVO_Y, FREQ)
+        self.pwm_x.start(0)
+        self.pwm_y.start(0)
 
-        print("X : %3d, Y : %3d" % (x, y))
+    def update_motors(self):
 
+        self.pwm_x.ChangeDutyCycle(self.m_x)
+        self.pwm_y.ChangeDutyCycle(self.m_y)
+        print("X : %3f, Y : %3f" % (self.m_x, self.m_y))
 
-def cleanup():
-    pwm_x.stop()
-    pwm_y.stop()
-    GPIO.cleanup()
+    def starting_position(self):
+        self.m_x = START_X
+        self.m_y = START_Y
 
-if __name__ == "__main__":
+    def cleanup(self):
+        self.pwm_x.stop()
+        self.pwm_y.stop()
+        GPIO.cleanup()
 
-    starting_position()
-    print("start")
+    def using_keys(self):
 
-    using_keys()
-    cleanup()
+        while True:
+            inp = input()
+            if inp   == 'a': self.m_x += STEP
+            elif inp == 'd': self.m_x -= STEP
+            elif inp == 'w': self.m_y -= STEP
+            elif inp == 's': self.m_y += STEP
+            elif inp == 'e': self.starting_position()
+            elif inp == 'q': break
+
+            self.update_motors()
+
