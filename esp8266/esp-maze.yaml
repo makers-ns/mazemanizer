@@ -1,0 +1,47 @@
+esphome:
+  name: esp-maze
+
+esp8266:
+  board: nodemcu
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret ota_pass
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp-Maze Fallback Hotspot"
+    password: !secret ota_pass
+
+light:
+  - platform: monochromatic
+    output: pwm_output_X
+    name: "maze-X"
+  - platform: monochromatic
+    output: pwm_output_Y
+    name: "maze-Y"
+
+output:
+  - platform: esp8266_pwm
+    id: pwm_output_X
+    pin: D3
+    frequency: 50 Hz
+
+  - platform: esp8266_pwm
+    id: pwm_output_Y
+    pin: D0
+    frequency: 50 Hz
+
+
+captive_portal:
+    

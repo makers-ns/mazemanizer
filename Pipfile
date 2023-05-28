@@ -8,6 +8,7 @@ opencv-python = "*"
 numpy = "*"
 matplotlib = "*"
 ipywidgets = "*"
+esphome = "*"
 
 [dev-packages]
 
