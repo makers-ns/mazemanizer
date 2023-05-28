@@ -11,11 +11,11 @@ class Mapa:
     @staticmethod
     def from_image(image, cell_size, matrix_size):
         COLOR_CLASSES = [
-            (255, 0, 0),
-            (0, 255, 0),
-            (0, 0, 255),
-            (0, 0, 0),
-            (255, 255, 255),
+            (255, 0, 0), # red
+            (0, 255, 0), # green
+            (0, 255, 255), # cyan
+            (0, 0, 0), # black
+            (255, 255, 255), # white
         ]
         m = np.zeros(matrix_size, dtype=int)
         w, h = cell_size
@@ -30,12 +30,15 @@ class Mapa:
                 # use kmeans to find one mean color
                 kmeans_img = np.float32(cell.reshape((-1, 3)))
                 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-                n_clusters = 1
+                n_clusters = 2
                 ret, label, center = cv.kmeans(kmeans_img,n_clusters,None,criteria,10,cv.KMEANS_RANDOM_CENTERS)
-                center = np.uint8(center)
-                res = center[label.flatten()]
-                res2 = res.reshape((cell.shape))
-                mean_color = res2[0, 0]
+                flat_labels = label.flatten()
+                most_common_class = flat_labels[np.argmax(np.bincount(flat_labels))]
+                center = np.uint8(center[most_common_class])
+                #res = center[label.flatten()]
+                #res2 = res.reshape((cell.shape))
+                #mean_color = res2[0, 0]
+                mean_color = center
                 # find distance between color classes
                 distances = [Mapa._color_distance(klass, mean_color) for klass in COLOR_CLASSES]
                 m[y, x] = np.argmin(distances)
