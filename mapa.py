@@ -2,7 +2,10 @@ import numpy as np
 import cv2 as cv
 
 class Mapa:
-    m = None
+    BALL_RANGE_1 = [(169, 0, 255), (179, 0, 255)]
+    BALL_RANGE_2 = [(0, 0, 255), (10, 0, 255)]
+    START_RANGE = [(70, 92, 55), (90, 255, 255)]
+    GOAL_RANGE = [(0, 0, 68), (179, 78, 146)]
     
     def __init__(self, m):
         self.m = m
@@ -11,37 +14,65 @@ class Mapa:
     @staticmethod
     def from_image(image, cell_size, matrix_size):
         COLOR_CLASSES = [
-            (255, 0, 0), # red
-            (0, 255, 0), # green
-            (0, 255, 255), # cyan
-            (0, 0, 0), # black
-            (255, 255, 255), # white
+            (255, 0, 0), # field
+            (0, 255, 0), # wall
+            (0, 255, 255), # ball
+            (0, 0, 0), # start
+            [(70, 92, 55), (90, 255, 255)], # goal
         ]
+
+        image_gray = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+        image_hsv = cv.cvtColor(image, cv.COLOR_RGB2HSV)
+
         m = np.zeros(matrix_size, dtype=int)
         w, h = cell_size
         for y in range(matrix_size[1]):
             for x in range(matrix_size[0]):
+                thresh_mask_counts = np.array([0, 0])
+                ball_mask_count = 0
+                start_end_mask_counts = np.array([0, 0])
                 # extract cell to analyze
                 y_begin = h*y
                 y_end = h*(y+1)-1
                 x_begin = w*x
                 x_end = w*(x+1)-1
                 cell = image[y_begin:y_end, x_begin:x_end]
-                # use kmeans to find one mean color
-                kmeans_img = np.float32(cell.reshape((-1, 3)))
-                criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-                n_clusters = 2
-                ret, label, center = cv.kmeans(kmeans_img,n_clusters,None,criteria,10,cv.KMEANS_RANDOM_CENTERS)
-                flat_labels = label.flatten()
-                most_common_class = flat_labels[np.argmax(np.bincount(flat_labels))]
-                center = np.uint8(center[most_common_class])
-                #res = center[label.flatten()]
-                #res2 = res.reshape((cell.shape))
-                #mean_color = res2[0, 0]
-                mean_color = center
-                # find distance between color classes
-                distances = [Mapa._color_distance(klass, mean_color) for klass in COLOR_CLASSES]
-                m[y, x] = np.argmin(distances)
+                cell_gray = image_gray[y_begin:y_end, x_begin:x_end]
+                cell_hsv = image_hsv[y_begin:y_end, x_begin:x_end]
+                # field and wall treshold
+                kernel_3x3 = np.ones((3, 3), np.float32) / 9
+                cell_gray_blured = cv.filter2D(cell_gray, -1, kernel_3x3)
+                _, field_wall_tresh = cv.threshold(cell_gray_blured, 60, 255, cv.THRESH_BINARY)
+                thresh_mask_counts[0] = np.where(field_wall_tresh.flatten())[0].size
+                thresh_mask_counts[1] = h * w - thresh_mask_counts[0] # komplement klasifikaciji zida je klasifikacija puta
+                # mask for start field
+                start_mask = cv.inRange(cell_hsv, Mapa.START_RANGE[0], Mapa.START_RANGE[1])
+                start_end_mask_counts[0] = np.where(start_mask.flatten())[0].size
+                # end field
+                end_mask = cv.inRange(cell_hsv, Mapa.GOAL_RANGE[0], Mapa.GOAL_RANGE[1])
+                start_end_mask_counts[1] = np.where(end_mask.flatten())[0].size
+                # ball cells
+                #print(np.where(cell_hsv[:,:,0].flatten() > 160)[0].size)
+                ball_mask_count = np.where(cell_hsv[:,:,0].flatten() > 178)[0].size
+                #ball_mask_1 = cv.inRange(cell_hsv, Mapa.BALL_RANGE_1[0], Mapa.BALL_RANGE_1[1])
+                #ball_mask_2 = cv.inRange(cell_hsv, Mapa.BALL_RANGE_2[0], Mapa.BALL_RANGE_2[1])
+                #ball_mask = ball_mask_1 + ball_mask_2
+                #ball_mask_count = np.where(ball_mask.flatten())[0].size
+                klass = -1
+                if ball_mask_count > 0:
+                    klass = 2
+                elif np.max(start_end_mask_counts) > 55:
+                    klass = 3 + np.argmax(start_end_mask_counts)
+                else:
+                    klass = np.argmax(thresh_mask_counts)
+                m[y, x] = klass
+                if y in range(16, 17+1) and x in range(7, 8+1):
+                    print(thresh_mask_counts, ball_mask_count, start_end_mask_counts)
+                #m[y, x] = np.argmax(mask_counts)
+        m[0:2, 0:2] = 1
+        m[0:2, 22:24] = 1
+        m[22:24, 0:2] = 1
+        m[22:24, 22:24] = 1
         return Mapa(m)
     
     @staticmethod

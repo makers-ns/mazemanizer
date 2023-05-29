@@ -164,11 +164,11 @@ class Image:
   @staticmethod
   def from_map(m):
     COLOR_CLASSES = [
-        (255, 0, 0), # red
-        (0, 255, 0), # green
-        (0, 255, 255), # cyan
-        (0, 0, 0), # black
-        (255, 255, 255), # white
+        (255, 255, 255), # field
+        (0, 0, 0), # wall
+        (255, 0, 0), # ball
+        (0, 255, 0), # start
+        (170, 170, 170), # goal
     ]
     m = m.m
     w, h = m.shape
