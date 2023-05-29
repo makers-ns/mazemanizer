@@ -5,7 +5,7 @@ then
   exit 1
 fi
 
-curl "http://esp-maze.local/light/maze-$1/turn_on?brightness=$2" \
+curl "http://192.168.16.168/light/maze-$1/turn_on?brightness=$2" \
   -H 'Accept: */*' \
   -H 'Accept-Language: en-US,en;q=0.9,sr-RS;q=0.8,sr;q=0.7' \
   -H 'Connection: keep-alive' \
@@ -16,3 +16,5 @@ curl "http://esp-maze.local/light/maze-$1/turn_on?brightness=$2" \
   --data-raw 'true' \
   --compressed \
   --insecure
+
+  
