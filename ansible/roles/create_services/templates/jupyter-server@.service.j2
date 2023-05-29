@@ -18,7 +18,7 @@ ExecStart=/usr/bin/podman run \
 	--rm \
 	--sdnotify=conmon \
 	-d \
-	-p "${JUPYTER_HOST_PORT}:8888" docker.io/jupyter/base-notebook:python-3.10 start-notebook.sh \
+	-p "${JUPYTER_HOST_PORT}:8888" ghcr.io/makers-ns/gozinc2023/notebook:latest start-notebook.sh \
 	--NotebookApp.password="${JUPYTER_PASSWORD}" --NotebookApp.base_url="/%i/"
 ExecStop=/usr/bin/podman stop \
 	--ignore -t 10 \
