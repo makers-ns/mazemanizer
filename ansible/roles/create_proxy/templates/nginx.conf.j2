@@ -7,6 +7,12 @@ http {
   }
 
   server {
+    listen 443;
+    server_name _;
+    rewrite ^(.*) http://$host$1 permanent;
+  }
+
+  server {
     listen 80 default_server;
     server_name _;
     port_in_redirect off;

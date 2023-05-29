@@ -5,6 +5,17 @@
     name: podman
     state: present
 
+- name: Login to registry
+  containers.podman.podman_login:
+    username: "{{ registry_username }}"
+    password: "{{ registry_password }}"
+    registry: "{{ registry_url }}"
+
+- name: Pull jupyter-server image
+  containers.podman.podman_image:
+    name: "{{ registry_url }}/makers-ns/gozinc2023/notebook:latest"
+    pull: true
+
 - name: Create env files directory
   ansible.builtin.file:
     path: /etc/gozinc/config.d
