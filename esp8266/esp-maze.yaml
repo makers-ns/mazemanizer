@@ -39,14 +39,14 @@ output:
     id: pwm_output_X
     pin: D3
     frequency: 50 Hz
-    min_power: 6%
-    max_power: 9%
+    min_power: 5%
+    max_power: 10%
 
   - platform: esp8266_pwm
     id: pwm_output_Y
     pin: D0
     frequency: 50 Hz
-    min_power: 8%
+    min_power: 5%
     max_power: 10%
 
 captive_portal:
