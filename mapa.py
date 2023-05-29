@@ -66,9 +66,6 @@ class Mapa:
                 else:
                     klass = np.argmax(thresh_mask_counts)
                 m[y, x] = klass
-                if y in range(16, 17+1) and x in range(7, 8+1):
-                    print(thresh_mask_counts, ball_mask_count, start_end_mask_counts)
-                #m[y, x] = np.argmax(mask_counts)
         m[0:2, 0:2] = 1
         m[0:2, 22:24] = 1
         m[22:24, 0:2] = 1
