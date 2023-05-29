@@ -5,7 +5,7 @@ Servo servoY;
 
 #define ANGLE_MIN 50
 #define ANGLE_MAX 130
-#define OFFSET_X 0
+#define OFFSET_X -30
 #define OFFSET_Y 20
 #define ANGLE_MID (ANGLE_MAX - ((ANGLE_MAX - ANGLE_MIN) / 2.0))
 #define STEP 10
@@ -70,6 +70,7 @@ void loop()
   right();
   down();
   left();
+  stop();
   delay(STEP_WAIT);
 
 }
