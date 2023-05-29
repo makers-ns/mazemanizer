@@ -80,10 +80,10 @@ class Image:
     roi_img = self.img[area_ud.begin:area_ud.end, area_lr.begin:area_lr.end]
     roi_img = np.float32(roi_img)
     roi_harris_corners = cv.cornerHarris(roi_img, blockSize=3, ksize=3, k=0.05)
-
     roi_harris_points = np.argwhere(roi_harris_corners > 0.025 * roi_harris_corners.max())
 
     roi_distances = np.array([np.linalg.norm(origin_point - point) for point in roi_harris_points])
+    
     roi_index = np.argmin(roi_distances)
     roi_point = roi_harris_points[roi_index]
 
@@ -107,15 +107,14 @@ class Image:
     return Image(cv.GaussianBlur(self.img, kernel, border))
     
   def gray(self):
-    print(self.img)
     return Image(cv.cvtColor(self.img, cv.COLOR_RGB2GRAY))
 
   def thresh(self):
     return cv.threshold(self.img, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
 
   def edge_corner_detect(self):
-    rois = self.get_rois()
-    top_left, top_right, bottom_left, bottom_right = tuple(Image(roi) for roi in rois)
+    #rois = self.get_rois()
+    top_left, top_right, bottom_left, bottom_right = self.get_rois()
     return (
         top_left._edge_corner_detect(self.area_left, self.area_top, np.min, np.min),
         top_right._edge_corner_detect(self.area_right, self.area_top, np.max, np.min),
@@ -125,7 +124,7 @@ class Image:
 
   def _edge_corner_detect(self, area_lr, area_tb, x_func, y_func):
     i0, i1 = self._edge_indices()
-    return (self.area_lr.begin + x_func(i0), self.area_tb.begin + y_func(i1))
+    return (area_lr.begin + x_func(i0), area_tb.begin + y_func(i1))
         
   def _edge_indices(self):
     grayed = self.gray()
