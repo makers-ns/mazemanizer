@@ -26,3 +26,10 @@ RUN rm -rf Pipfile Pipfile.lock
 # Copy workshop notebook
 
 COPY --chown=${NB_UID}:${NB_GID} notebook.ipynb .
+RUN mkdir -p /home/${NB_USER}/images
+RUN mkdir -p /home/${NB_USER}/rig
+COPY --chown=${NB_UID}:${NB_GID} rig/calib.npz rig
+COPY --chown=${NB_UID}:${NB_GID} images/corners_img.png images
+COPY --chown=${NB_UID}:${NB_GID} images/my_photo01.jpg images
+COPY --chown=${NB_UID}:${NB_GID} images/my_photo05.jpg images
+COPY --chown=${NB_UID}:${NB_GID} images/walls.jpg images/maze01.jpg
