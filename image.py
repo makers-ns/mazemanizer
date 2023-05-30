@@ -158,7 +158,7 @@ class Image:
     pts1 = np.float32(corners)
     pts2 = np.float32([[0, 0], [img_w - 1, 0], [0, img_h - 1], [img_w - 1, img_h - 1]])
     matrix = cv.getPerspectiveTransform(pts1, pts2)
-    print("Set new areas and origin points!")
+    #print("Set new areas and origin points!")
     return Image(cv.warpPerspective(self.img, matrix, (img_h, img_w)))
 
   @staticmethod
