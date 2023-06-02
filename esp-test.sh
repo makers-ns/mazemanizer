@@ -1,5 +1,3 @@
-
-
 ./esp-down.sh
 sleep 1
 ./esp-left.sh
