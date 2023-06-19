@@ -1,0 +1,22 @@
+{
+	"name": "Python 3",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.10",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/pipenv:2": {}
+	},
+	"postCreateCommand": "/bin/bash ubuntu-deps.sh && pipenv install",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.venvPath": "~/.local/share/virtualenvs"
+			},
+			"extensions": [
+				"ms-toolsai.jupyter"
+			]
+		}
+	},
+
+	// No need for this with Docker
+	"remoteUser": "root",
+	"containerUser": "root"
+}
